@@ -1,22 +1,14 @@
-export default class Character {
-
-    	constructor(x, y, w, h) {
-		this.x = x;
-		this.y = y;
-		this.w = w;
-		this.h = h;
-//		this.isOnPlatForm = false;
-	}
+// character.js
+export class Character {
+    constructor(x, y, w, h) {
+        this.x = x;
+        this.y = y;
+        this.w = w;
+        this.h = h;
+    }
 
     draw() {
-        rect(this.x, this.y, this.w, this.h);
+        fill(80, 120, 200);
+        rect(this.x, this.y, this.w, this.h, 6);
     }
-
-    isColliding(character, platform) {
-    if (platform.y === character.y + character.w && platform.x <= character.x + character.w) {
-        return true;
-    } else {
-        return false;
-    }
-}
 }
