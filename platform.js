@@ -6,8 +6,13 @@ export default class Platform {
         this.h = h;
     }
 
-    draw() {
-        fill(100, 200, 100);
-        rect(this.x, this.y, this.w, this.h, 6);
+   draw() {
+    if (this.type === 'breakable') {
+        fill(255, 0, 0); // RED
+    } else {
+        fill(200, 255, 0); // default
     }
+    rect(this.x, this.y, this.w, this.h);
+}
+
 }

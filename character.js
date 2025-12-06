@@ -8,7 +8,7 @@ export class Character {
     }
 
     draw() {
-        fill(80, 120, 200);
+        fill(20, 120, 200);
         rect(this.x, this.y, this.w, this.h, 6);
     }
 }
