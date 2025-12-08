@@ -1,139 +1,76 @@
-// -----------------------------
-// Character Class
-// -----------------------------
-class Character {
-  constructor(x, y, w, h) {
-    this.x = x;
-    this.y = y;
-    this.w = w;
-    this.h = h;
 
-    this.vy = 0;       // vertical velocity
-    this.gravity = 1;  // gravity per frame
-  }
 
-  draw() {
-    push();
-    fill("orange");
-    rect(this.x, this.y, this.w, this.h);
-    pop();
-  }
-}
+@@ -9,25 +9,19 @@ let platforms = [];
+let vy = 0; //vertical speed, aka up/down
+let prevY = 0;//previous frame, keep track of each frame to prevent fall troughs
 
-// -----------------------------
-// Scene Variables
-// -----------------------------
-let canvasWidth = 400;
-let canvasHeight = 400;
-let floor = 300;
-let character = new Character(50, 50, 50, 50);
+const shiftOnLand = 40;           // how much all platforms move down on a new-platform landing
+let lastLandedPlatform = null;    // remember last platform we landed on to avoid repeated shifts
 
-const moveSpeed = 5;     // horizontal speed
-const jumpSpeed = -15;   // upward jump velocity
-const tolerance = 5;     // pixel tolerance for platform standing/jump
-
-// -----------------------------
-// Multiple Platforms
-// -----------------------------
-let platforms = [
-  { x: 250, y: 230, w: 80, h: 20 },
-  { x: 100, y: 180, w: 100, h: 20 },
-  { x: 300, y: 120, w: 60, h: 20 }
-];
-
-// -----------------------------
-// Helper Functions
-// -----------------------------
-function isOnAnyPlatform() {
-  for (let plat of platforms) {
-    const horizontallyAligned =
-      character.x + character.w > plat.x &&
-      character.x < plat.x + plat.w;
-    const verticallyAligned =
-      character.y + character.h >= plat.y - tolerance &&
-      character.y + character.h <= plat.y + tolerance;
-
-    if (horizontallyAligned && verticallyAligned) {
-      return plat; // return the platform character is standing on
-    }
-  }
-  return null;
-}
-
-// -----------------------------
-// p5 Setup
-// -----------------------------
 function setup() {
-  createCanvas(canvasWidth, canvasHeight);
+    createCanvas(canvasWidth, canvasHeight);
+
+     platforms.push(new Platform(100, 200, 100, 10));//platform one etc.
+    platforms.push(new Platform(250, 150, 120, 10));
+    platforms.push(new Platform(50, 100, 80, 10));
 }
 
-// -----------------------------
-// p5 Draw Loop
-// -----------------------------
-function draw() {
-  background(100);
-
-  // --- Horizontal movement ---
-  if (keyIsDown(65)) { // 'A' key
-    character.x -= moveSpeed;
-  }
-  if (keyIsDown(68)) { // 'D' key
-    character.x += moveSpeed;
-  }
-
-  // Keep character inside canvas
-  character.x = constrain(character.x, 0, canvasWidth - character.w);
-
-  // --- Gravity & vertical motion ---
-  character.y += character.vy;
-  character.vy += character.gravity;
-
-  // --- Floor collision ---
-  if (character.y + character.h > floor) {
-    character.y = floor - character.h;
-    character.vy = 0;
-  }
-
-  // --- Platform collision (snap only when falling) ---
-  let standingPlat = isOnAnyPlatform();
-  if (character.vy > 0 && standingPlat) {
-    character.y = standingPlat.y - character.h;
-    character.vy = 0;
-  }
-
-  // --- Draw all platforms ---
-  for (let plat of platforms) {
+// Obstacle / Spike / Death// Why do I have this?
+function drawObstacle() {
     push();
-    fill("blue");
-    rect(plat.x, plat.y, plat.w, plat.h);
+    fill("red");
+    triangle(180, 300, 210, 240, 240, 300);
     pop();
-  }
-
-  // --- Draw character ---
-  character.draw();
-
-  // --- Draw floor line ---
-  stroke(0);
-  line(0, floor, canvasWidth, floor);
+     platforms.push(new Platform(100, 200, 110, 10));//platform one etc.
+    platforms.push(new Platform(280, 125, 100, 10));
+    platforms.push(new Platform(50, 50, 80, 10));
 }
 
-// -----------------------------
-// Jump on key press
-// -----------------------------
-function keyPressed() {
-  // Check if standing on floor
-  let onFloor =
-    character.y + character.h >= floor - tolerance &&
-    character.y + character.h <= floor + tolerance;
+function draw() {
+    background(100, 100, 100);
+    background(255, 150, 250);
 
-  // Check if standing on any platform
-  let onPlatform = isOnAnyPlatform();
+      // Horizontal movement
+  if (keyIsDown(65)) character.x -= 10; // A key is 65 // 10 is speed on the x-axis
 
-  if (onFloor || onPlatform) {
-    character.vy = jumpSpeed;
 
-    // Diagonal jump
-    if (keyIsDown(65)) character.x -= 10; // left
-    else if (keyIsDown(68)) character.x += 10; // right
-  }
+@@ -59,15 +53,40 @@
+            vy = -20; // auto-jump
+            break;   // only land on first platform detected
+        }
+        // --- NEW: only trigger a global shift if this is a different platform than last frame ---
+            if (plat !== lastLandedPlatform) {
+                // move all platforms down by shiftOnLand
+                for (let p of platforms) {
+                    p.y += shiftOnLand;
+                    // recycle platform when it moves off bottom
+                    if (p.y > canvasHeight) {
+                        p.y = -10; // respawn above canvas
+                    }
+                }
+                // move the character down the same amount so it visually stays on the landed platform
+                character.y += shiftOnLand;
+
+                // record this platform as the last landed on
+                lastLandedPlatform = plat;
+            }
+
+            landedThisFrame = true;
+            break; // only land on the first platform detected
+        }
+    }
+
+    // If we didn't land this frame, clear lastLandedPlatform so we can detect a new landing next time
+    if (!landedThisFrame) {
+        lastLandedPlatform = null;
+    }
+
+   // ----- Floor collision & auto-jump -----
+    if (character.y + character.h >= floor) {//check if char.feet is on floor
+        character.y = floor - character.h;//anti-sink here too
+        vy = -20;  // auto-jump on floor
+    }
+
+    // Floor (selfexplanitory)
+    line(0, floor, canvasWidth, floor);
 }
