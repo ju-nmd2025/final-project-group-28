@@ -10,8 +10,13 @@ function setup() {
 
 function draw() {
   textSize(20);
-  text("you died", 160, 170);
+  text("you died.", 160, 170);
 
   rect(96, 225, 200, 70);
   text("restart game", 140, 268);
+}
+
+function mousePressed() {
+  if (mouseX > 95 && mouseX < 290 && mouseY > 220 && mouseY < 295) {
+  }
 }
