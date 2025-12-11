@@ -1,3 +1,5 @@
+export class EndScreen {
+
 function setup() {
   createCanvas(400, 400);
 
@@ -14,4 +16,5 @@ function draw() {
 
   rect(96, 225, 200, 70);
   text("restart game", 140, 268);
+}
 }

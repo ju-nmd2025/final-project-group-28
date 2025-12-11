@@ -1,3 +1,5 @@
+export StartScreen {
+
 function setup() {
   createCanvas(400, 400);
 
@@ -14,4 +16,5 @@ function draw() {
 
 function mousePressed() {
   if (mouseX > 85 && mouseX < 315 && mouseY > 150 && mouseY < 220);
+}
 }
