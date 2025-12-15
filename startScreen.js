@@ -1,20 +1,43 @@
-export StartScreen {
+export class StartScreen {
+  constructor(onStart) {
+    this.onStart = onStart;
 
-function setup() {
-  createCanvas(400, 400);
+    // button position and size (your values)
+    this.x = 85;
+    this.y = 150;
+    this.w = 230;
+    this.h = 70;
+  }
 
-  background(255, 150, 250);
+  draw() {
+    // background of start screen
+    background(255, 150, 250);
 
-  strokeWeight(6);
-  rect(85, 150, 230, 70);
-}
+    // draw button
+    strokeWeight(6);
+    fill(255, 255, 255);
+    rect(this.x, this.y, this.w, this.h, 40);
 
-function draw() {
-  textSize(22);
-  text("START", 163, 195);
-}
+    // text
+    noStroke();
+    fill(0);
+    textSize(22);
+    text("START", this.x + 78, this.y + 45);
+  }
 
-function mousePressed() {
-  if (mouseX > 85 && mouseX < 315 && mouseY > 150 && mouseY < 220);
-}
+  mousePressed(mx, my) {
+    // check if click is inside the button
+    if (
+      mx > this.x &&
+      mx < this.x + this.w &&
+      my > this.y &&
+      my < this.y + this.h
+    ) {
+      if (typeof this.onStart === "function") {
+        this.onStart();
+      }
+      return true;
+    }
+    return false;
+  }
 }
