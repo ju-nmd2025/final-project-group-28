@@ -93,106 +93,96 @@ function draw() {
   if (keyIsDown(68)) character.x += 10; // D key is 68
   character.x = constrain(character.x, 0, canvasWidth - character.w);
 
-  prevY = character.y; //keeping track for the draw-part
+  prevY = character.y;
 
   // Gravity
-  vy += gravity; //gives the bounce speed
-  character.y += vy; //gives bounce
+  vy += gravity;
+  character.y += vy;
 
   //update platforms
-  //index is the number in the array: the loop goes backwards to prevent breakage:
   for (let i = platforms.length - 1; i >= 0; i--) {
-    //Index never is above 0 so it never stops //--i means the loop is backwards
-    const p = platforms[i]; //p is current platform with i a number from array//array indexing= [i]
-
-    //skip broken platforms
+    const p = platforms[i];
     if (p.removed) {
-      //checks if a removed platform exists
-      platforms.splice(i, 1); //removes 1 item from the array aka removes current platform
-      continue; //stop and move on
+      platforms.splice(i, 1);
+      continue;
     }
 
     //moving platform behaviour
     if (p.type === TYPE_MOVING) {
-      //they're the same
-      //ensure vx exists// vx- velocity on the x-axis
-      if (typeof p.vx === "undefined") p.vx = -2; //if vx is undefined it will be randomized
-      p.x += p.vx; //moving the plat based on the speed
+      if (typeof p.vx === "undefined") p.vx = -2;
+      p.x += p.vx;
+
       //edgebounce
       if (p.x <= 0) {
         p.x = 0;
         p.vx *= -1;
-      } //px= plats hirizontal position // check if it's past the left wall // if that is true it will put it at the wall and sent it the other way
+      }
       if (p.x + p.w >= canvasWidth) {
         p.x = canvasWidth - p.w;
         p.vx *= -1;
-      } // same but different, because the left only checks left, the right checks everything
+      }
     }
 
     // Breakable platform crumble timer
     if (p.type === TYPE_BREAKABLE && p.brokenTimer > 0) {
-      p.brokenTimer -= 1; //the timer is one
-      if (p.brokenTimer <= 0) p.removed = true; //if the time is up//remove crumble
+      p.brokenTimer -= 1;
+      if (p.brokenTimer <= 0) p.removed = true;
     }
   }
 
   // --- Smooth camera/world scroll ---
   if (character.y < shiftThreshold) {
-    // check if  char is above halfCanvas
-    const dy = shiftThreshold - character.y; //How far above
-    const shift = Math.min(dy, scrollSpeed); //scrollspeed
+    const dy = shiftThreshold - character.y;
+    const shift = Math.min(dy, scrollSpeed);
 
-    for (let p of platforms) p.y += shift; //moves  platform "shift" pixels
-    floor += shift; //shifts floor
-    character.y += shift; // keep character in view
+    for (let p of platforms) p.y += shift;
+    floor += shift;
+    character.y += shift;
   }
 
-  character.draw(); //draws the character 60 times per second
-  for (let plat of platforms) plat.draw(); //makes platforms plat.draw
-  //draws all the platforms in setup
+  character.draw();
+  for (let plat of platforms) plat.draw();
 
-  // ------- Platform landing (prevents tunneling) -------
+  // Platform landing (prevents tunneling)
   let landedThisFrame = false;
   lastLandedPlatform = null;
 
   for (let plat of platforms) {
-    //loops through all platforms exept breaking plats
-    if (plat.removed) continue; //skip
-    if (plat.type === TYPE_BREAKABLE && plat.broken) continue; //skip
+    //loops through all platforms
+    if (plat.removed) continue;
+    if (plat.type === TYPE_BREAKABLE && plat.broken) continue;
 
-    let withinX =
-      character.x + character.w > plat.x && character.x < plat.x + plat.w; //char.right edge > plat.leftEdge // char.left edge < plat.rightEdge
-    let feetPrev = prevY + character.h; //where char.feet was based on prev.char and char.Height
-    let feetNow = character.y + character.h; //where char.feet is now based on char.y and char.Height
-    let platTop = plat.y; //where the top of the platform is in y-axis
+    let withinX = character.x + character.w > plat.x && character.x < plat.x + plat.w;
+    let feetPrev = prevY + character.h;
+    let feetNow = character.y + character.h;
+    let platTop = plat.y;
 
-    //possible landing
+    // Possible landing
     if (withinX && feetPrev <= platTop && feetNow >= platTop && vy > 0) {
-      //So, if char.js is within plat.js x-parameter // and prev.char is above or on plat.js // checks if char.feet now is ontop of plat.top //check for vertical speed character.y = platTop - character.h; // prevents char.js from sinking through the floor
-      character.y = platTop - character.h; //char on top snap
+      character.y = platTop - character.h; //snap to platform
 
       //special behaviours
       if (plat.type === TYPE_BREAKABLE) {
-        vy = jumpVy; //char can jump here
+        vy = jumpVy;
         plat.broken = true;
         plat.brokenTimer = 12; //frames until fallthrough
       } else {
-        vy = jumpVy; // auto-jump// normal behaviour
+        vy = jumpVy;
       }
 
-      landedThisFrame = true; //checks if char landed
-      lastLandedPlatform = plat; //on which platform
-      break; //exiting loop
+      landedThisFrame = true;
+      lastLandedPlatform = plat;
+      break; 
     }
-  }
-
-  if (!lastLandedPlatform && character.y + character.h >= floor) {
-    character.y = floor - character.h;
-    vy = jumpVy;
   }
 
   if (character.y > canvasHeight) {
     endGame();
+  }
+
+ if (!lastLandedPlatform && character.y + character.h >= floor) {
+    character.y = floor - character.h;
+    vy = jumpVy;
   }
 
   // Floor (selfexplanitory)
@@ -206,8 +196,17 @@ function draw() {
     platforms.push(newPlat);
   }
 
-  let highestY = Math.min(...platforms.map((p) => p.y)); //find highest y on screen
-  while (highestY > -MAX_GAP) {
+  let highestY = Infinity;
+
+// find the highest (smallest y) platform
+for (let p of platforms) {
+  if (p.y < highestY) {
+    highestY = p.y;
+  }
+}
+
+while (highestY > -MAX_GAP) {
+
     // spawn platforms above canvas
     const gap = Math.floor(random(MIN_GAP, MAX_GAP + 1)); //random gap
     const width = Math.floor(random(50, 120)); // random width
@@ -216,13 +215,13 @@ function draw() {
     const maxX = Math.min(canvasWidth - width, lastPlatX + maxDX); //not of right
     const x = Math.floor(random(minX, maxX + 1)); //random x within that
 
-    let newPlat = new Platform(x, highestY - gap, width, 10); //create new plat
-    newPlat.visited = false; //reset so char can jump on it
+    let newPlat = new Platform(x, highestY - gap, width, 10);
+    newPlat.visited = false;
     newPlat.removed = false;
     newPlat.broken = false;
     newPlat.brokenTimer = 0;
 
-    //assign random type -----
+    //assign random type
     const r = random();
     if (r < PROB_NORMAL) {
       newPlat.type = TYPE_NORMAL;
@@ -233,8 +232,8 @@ function draw() {
       newPlat.broken = false;
     }
 
-    platforms.push(newPlat); //add to platformes array
-    highestY = newPlat.y; //update highest plat
+    platforms.push(newPlat); //add to array
+    highestY = newPlat.y; //update highest
     lastPlatX = x; //remeber the new x
   }
 }
@@ -247,7 +246,7 @@ function mouseClicked() {
   }
 }
 
-   //Game start / reset helpers
+//Game start / reset
 function startGame() {
   currentScreen = "game";
   initGameState();
@@ -255,7 +254,7 @@ function startGame() {
 
 function endGame() {
   currentScreen = "end";
-  // freeze game state (we simply top updating because draw() returs early for 'end')
+  
 }
 
 function retryGame() {
