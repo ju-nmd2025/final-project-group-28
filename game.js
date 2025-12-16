@@ -1,4 +1,4 @@
-import Platform from "./platform.js";
+import { Platform } from "./platform.js";
 import { Character } from "./character.js";
 import { StartScreen } from "./startScreen.js";
 import { EndScreen } from "./endScreen.js";
