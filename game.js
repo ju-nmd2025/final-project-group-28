@@ -1,5 +1,5 @@
-import Platform from "./platform";
-import { Character } from "./character";
+import Platform from "./platform.js";
+import { Character } from "./character.js";
 import { StartScreen } from "./startScreen.js";
 import { EndScreen } from "./endScreen.js";
 
@@ -11,36 +11,41 @@ let canvasWidth = 400;
 let canvasHeight = 400;
 let floor = 300;
 let character;
-let platforms = []; //this is the platforms array. It contains every platform
-let vy = 0; //vertical speed, aka up/down let prevY = 0;//previous frame, keep track of each frame to prevent fall troughs
-let prevY = 0; //previous frame what
-let lastLandedPlatform = null; //detect what platform char last landed on
-let lastPlatX = 100; //starting x of last plat //remembers the x of the newest respawn to prevent impossible jumps
+let platforms = [];
+let vy = 0;
+let prevY = 0;
+let lastLandedPlatform = null;
+let lastPlatX = 100;
 
 // Platform types
 const TYPE_NORMAL = "normal";
 const TYPE_BREAKABLE = "breakable";
 const TYPE_MOVING = "moving";
+
 //probabilities// sum to 1.0
 const PROB_NORMAL = 0.7;
 const PROB_MOVING = 0.2;
 const PROB_BREAKABLE = 0.1;
 
-const gravity = 1.5; //redifined gravity jumps to create more complex expressions
-const jumpVy = -20; //jumpvelocity
-const MIN_GAP = 100; //Platform spacing minimum
-const MAX_GAP = 120; //Maximum
-const shiftThreshold = canvasHeight / 2; // upper half of canvas
-const scrollSpeed = 6; // px per frame
+const gravity = 1.5;
+const jumpVy = -20;
+const MIN_GAP = 100;
+const MAX_GAP = 120;
+const shiftThreshold = canvasHeight / 2;
+const scrollSpeed = 6;
 
 function setup() {
+
   createCanvas(canvasWidth, canvasHeight);
   startScreen = new StartScreen(() => startGame());
   endScreen = new EndScreen(() => retryGame());
   initGameState();
 }
 
+window.setup = setup;
+
 function initGameState() {
+
   floor = 300;
   vy = 0;
   prevY = 0;
@@ -58,7 +63,7 @@ function initGameState() {
 
   let p2 = new Platform(280, 125, 100, 10);
   p2.type = TYPE_MOVING;
-  p2.vx = 2; //speed for moving platforms
+  p2.vx = 2;
   p2.removed = false;
   platforms.push(p2);
 
@@ -71,6 +76,7 @@ function initGameState() {
 }
 
 function draw() {
+
   if (currentScreen === "start") {
     startScreen.draw();
     return;
@@ -85,8 +91,8 @@ function draw() {
   background(255, 150, 250);
 
   // Horizontal movement
-  if (keyIsDown(65)) character.x -= 10; // A key is 65 // 10 is speed on the x-axis
-  if (keyIsDown(68)) character.x += 10; // D key is 68 //
+  if (keyIsDown(65)) character.x -= 10; // A key is 65
+  if (keyIsDown(68)) character.x += 10; // D key is 68
   character.x = constrain(character.x, 0, canvasWidth - character.w);
 
   prevY = character.y; //keeping track for the draw-part
@@ -224,7 +230,6 @@ function draw() {
       newPlat.type = TYPE_NORMAL;
     } else if (r < PROB_NORMAL + PROB_MOVING) {
       newPlat.type = TYPE_MOVING;
-      newPlat.vx = random([-2, -1, 1, 2]);
     } else {
       newPlat.type = TYPE_BREAKABLE;
       newPlat.broken = false;
@@ -238,17 +243,13 @@ function draw() {
 
 function mouseClicked() {
   if (currentScreen === "start") {
-    startGame();
+    startScreen.handleClick(mouseX, mouseY);
   } else if (currentScreen === "end") {
-    retryGame();
+    endScreen.handleClick(mouseX, mouseY);
   }
 }
 
-// game keys (if you want to use keyPressed rather than keyIsDown
-
-/* -------------------------
-   Game start / reset helpers
-   ------------------------- */
+   //Game start / reset helpers
 function startGame() {
   currentScreen = "game";
   initGameState();
@@ -264,35 +265,12 @@ function retryGame() {
   initGameState();
 }
 
-function initGameState() {
-  // reset physics & world
-  floor = 300;
-  vy = 0;
-  prevY = 0;
-  lastLandedPlatform = null;
-  lastPlatx = 100;
+window.draw = draw;
 
-  // create player
-  character = new Character(50, 50, 50, 50);
+window.addEventListener("click", function (event) {
+  mouseClicked();
+});
 
-  // initial platforms (seed)
-  platforms = [];
-
-  let p1 = new Platform(100, 200, 110, 10);
-  p1.type = TYPE_NORMAL;
-  p1.removed = false;
-  platforms.push(p1);
-
-  let p2 = new Platform(280, 125, 100, 10);
-  p2.type = TYPE_MOVING;
-  p2.vx = 2;
-  p2.removed = false;
-  platforms.push(p2);
-
-  let p3 = new Platform(50, 50, 80, 10);
-  p3.type = TYPE_BREAKABLE;
-  p3.broken = false;
-  p3.brokenTimer = 0;
-  p3.removed = false;
-  platforms.push(p3);
-}
+window.addEventListener("keydown", function (event) {
+  mouseClicked();
+});

@@ -1,14 +1,12 @@
 export class EndScreen {
-  constructor(onRetry, options = {}) {
-    this.onRetry = onRetry;
+  constructor(retryCallback) {
+    this.retryCallback = retryCallback;
 
     // retry button geometry (centered)
-    this.buttonX = 85;
-    this.buttonY = 150;
-    this.buttonW = 230;
-    this.buttonH = 70;
-
-    this.title = options.title ?? "Game Over";
+    this.x = 85;
+    this.y = 150;
+    this.w = 230;
+    this.h = 70;
   }
 
   draw() {
@@ -20,13 +18,13 @@ export class EndScreen {
     noStroke();
     fill(255);
     textSize(44);
-    text(this.title, width / 2, height * 0.25);
+    text("Game Over", width / 2, height * 0.25);
 
     // Draw retry button
     stroke(0);
     strokeWeight(2);
     fill(255, 255, 255);
-    rect(this.buttonX, this.buttonY, this.buttonW, this.buttonH, 40);
+    rect(this.x, this.y, this.w, this.h, 40);
 
     // Label
     noStroke();
@@ -34,23 +32,26 @@ export class EndScreen {
     textSize(18);
     text(
       "Retry",
-      this.buttonX + this.buttonW / 2,
-      this.buttonY + this.buttonH / 2
+      this.x + this.w / 2,
+      this.y + this.h / 2
     );
 
     pop();
   }
 
-  mousePressed(mx, my) {
+ handleClick(mx, my) {
+    // check if click is inside button
     if (
-      mx > this.buttonX &&
-      mx < this.buttonX + this.buttonW &&
-      my > this.buttonY &&
-      my < this.buttonY + this.buttonH
+      mx >= this.x &&
+      mx <= this.x + this.w &&
+      my >= this.y &&
+      my <= this.y + this.h
     ) {
-      if (typeof this.onRetry === "function") this.onRetry();
+      this.retryCallback();
       return true;
     }
     return false;
   }
 }
+
+export {EndScreen};
