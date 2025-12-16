@@ -53,5 +53,3 @@ export class EndScreen {
     return false;
   }
 }
-
-export {EndScreen};

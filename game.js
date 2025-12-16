@@ -42,8 +42,6 @@ function setup() {
   initGameState();
 }
 
-window.setup = setup;
-
 function initGameState() {
 
   floor = 300;
@@ -264,13 +262,3 @@ function retryGame() {
   currentScreen = "game";
   initGameState();
 }
-
-window.draw = draw;
-
-window.addEventListener("click", function (event) {
-  mouseClicked();
-});
-
-window.addEventListener("keydown", function (event) {
-  mouseClicked();
-});

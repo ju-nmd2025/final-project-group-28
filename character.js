@@ -14,5 +14,3 @@ export class Character {
         rect(this.x, this.y, this.w, this.h, 6);
     }
 }
-
-export {Character};

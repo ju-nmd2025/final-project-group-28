@@ -40,5 +40,3 @@ constructor(startCallback) {
     return false;
   }
 }
-
-export {StartScreen};
