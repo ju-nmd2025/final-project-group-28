@@ -9,6 +9,8 @@ export class Character {
 
     draw() {
         fill(20, 120, 200);
+        stroke(0);
+        strokeWeight(1);
         rect(this.x, this.y, this.w, this.h, 6);
     }
 }

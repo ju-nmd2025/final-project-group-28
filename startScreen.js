@@ -14,7 +14,8 @@ export class StartScreen {
     background(255, 150, 250);
 
     // draw button
-    strokeWeight(6);
+    stroke(0)
+    strokeWeight(1);
     fill(255, 255, 255);
     rect(this.x, this.y, this.w, this.h, 40);
 

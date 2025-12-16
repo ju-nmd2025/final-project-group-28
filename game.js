@@ -187,7 +187,7 @@ function draw() {
     vy = jumpVy;
   }
 
-  if (character.y + canvasHeight) {
+  if (character.y > canvasHeight) {
     endGame();
   }
 
@@ -236,11 +236,11 @@ function draw() {
   }
 }
 
-function keyPressed() {
+function mouseClicked() {
   if (currentScreen === "start") {
-    if (key === " " || key === "Enter") startGame();
+    startGame();
   } else if (currentScreen === "end") {
-    if (key === " " || key === "Enter") retryGame();
+    retryGame();
   }
 }
 
@@ -273,7 +273,7 @@ function initGameState() {
   lastPlatx = 100;
 
   // create player
-  character = new Chracter(50, 50, 50, 50);
+  character = new Character(50, 50, 50, 50);
 
   // initial platforms (seed)
   platforms = [];
