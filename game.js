@@ -77,7 +77,7 @@ function draw() {
   }
 
   if (currentScreen === "end") {
-    // update end screen score display then draw
+    // update end screen
     endScreen.draw();
     return;
   }
@@ -234,4 +234,63 @@ function draw() {
     highestY = newPlat.y; //update highest plat
     lastPlatX = x; //remeber the new x
   }
+}
+
+function keyPressed() {
+  if (currentScreen === "start") {
+    if (key === " " || key === "Enter") startGame();
+  } else if (currentScreen === "end") {
+    if (key === " " || key === "Enter") retryGame();
+  }
+}
+
+// game keys (if you want to use keyPressed rather than keyIsDown
+
+/* -------------------------
+   Game start / reset helpers
+   ------------------------- */
+function startGame() {
+  currentScreen = "game";
+  initGameState();
+}
+
+function endGame() {
+  currentScreen = "end";
+  // freeze game state (we simply top updating because draw() returs early for 'end')
+}
+
+function retryGame() {
+  currentScreen = "game";
+  initGameState();
+}
+
+function initGameState() {
+  // reset physics & world
+  floor = 300;
+  vy = 0;
+  prevY = 0;
+  lastLandedPlatform = null;
+  lastPlatx = 100;
+
+  // create player
+  character = new Chracter(50, 50, 50, 50);
+
+  // initial platforms (seed)
+  platforms = [];
+
+  let p1 = new Platform(100, 200, 110, 10);
+  (p1.type = TYPE_NORMAL), (p1.removed = false);
+  platforms.push(p1);
+
+  let p2 = new Platform(280, 125, 100, 10);
+  p2.type = TYPE_MOVING;
+  (p2.vx = 2), (p2.removed = false);
+  platforms.push(p2);
+
+  let p3 = new Platform(50, 50, 80, 10);
+  p3.type = TYPE_BREAKABLE;
+  p3.broken = false;
+  p3.brokenTimer = 0;
+  p3.removed = false;
+  platforms.push(p3);
 }
