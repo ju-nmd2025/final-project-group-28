@@ -279,12 +279,14 @@ function initGameState() {
   platforms = [];
 
   let p1 = new Platform(100, 200, 110, 10);
-  (p1.type = TYPE_NORMAL), (p1.removed = false);
+  p1.type = TYPE_NORMAL;
+  p1.removed = false;
   platforms.push(p1);
 
   let p2 = new Platform(280, 125, 100, 10);
   p2.type = TYPE_MOVING;
-  (p2.vx = 2), (p2.removed = false);
+  p2.vx = 2;
+  p2.removed = false;
   platforms.push(p2);
 
   let p3 = new Platform(50, 50, 80, 10);
