@@ -273,7 +273,7 @@ function initGameState() {
   lastPlatx = 100;
 
   // create player
-  character = new Chracter(50, 50, 50, 50);
+  character = new Character(50, 50, 50, 50);
 
   // initial platforms (seed)
   platforms = [];
