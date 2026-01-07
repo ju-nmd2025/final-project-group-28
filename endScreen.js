@@ -1,4 +1,4 @@
-export class EndScreen {
+class EndScreen {
   constructor(retryCallback) {
     this.retryCallback = retryCallback;
 
@@ -30,16 +30,12 @@ export class EndScreen {
     noStroke();
     fill(0);
     textSize(18);
-    text(
-      "Retry",
-      this.x + this.w / 2,
-      this.y + this.h / 2
-    );
+    text("Retry", this.x + this.w / 2, this.y + this.h / 2);
 
     pop();
   }
 
- handleClick(mx, my) {
+  handleClick(mx, my) {
     // check if click is inside button
     if (
       mx >= this.x &&
@@ -54,4 +50,4 @@ export class EndScreen {
   }
 }
 
-export {EndScreen};
+export { EndScreen };

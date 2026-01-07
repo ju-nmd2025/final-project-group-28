@@ -1,13 +1,13 @@
-export class StartScreen {
-constructor(startCallback) {
+class StartScreen {
+  constructor(startCallback) {
     this.startCallback = startCallback; // callback to start the game
-  
+
     // button position and size (your values)
     this.x = 85;
     this.y = 150;
     this.w = 230;
     this.h = 70;
-    }
+  }
 
   draw() {
     // background of start screen
@@ -41,4 +41,4 @@ constructor(startCallback) {
   }
 }
 
-export {StartScreen};
+export { StartScreen };
